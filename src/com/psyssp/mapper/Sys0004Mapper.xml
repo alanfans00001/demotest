@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.psyssp.mapper.Sys0004Mapper">
+	<!-- 根据ID获取实体 -->
+	<select id="find" parameterType="java.lang.Integer" resultType="com.psyssp.beans.SysRolesToPurview">
+	select * from roles_to_purview where id = #{id}
+	</select>
+	
+	<!-- 获取集合 -->
+	<select id="findList" parameterType="java.util.HashMap" resultType="com.psyssp.beans.SysRolesToPurview">
+	select * from roles_to_purview where 1=1
+		<if test="m != null">
+			<if test="m.roleno != null">
+			 and roleno like lower(concat('%',#{m.roleno},'%'))
+			</if>
+		</if>
+		<if test="roleNO != null">
+			and roleno = #{roleNO}
+		</if>
+		<if test="orderby != null">
+		order by ${orderby}		
+			<if test="order !=null">
+			${order}
+			</if>
+		</if>
+	</select>
+
+	<!-- 多表查询菜单集合 -->
+	<select id="findObjectList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	select rp.id,rp.roleno,rp.menuno,rp.funno,rp.createrno,rp.createdate,rp.modifierno,rp.modifiedate,
+		me.menuno,me.menuname,me.fathermenuno,me.menutype,me.menuurl,me.allfunno
+		from roles_to_purview rp,menu me where rp.menuno = me.menuno		
+		<if test="m != null">
+			<if test="m.roleno != null and m.roleno !=''">
+			and rp.roleno = #{m.roleno}
+			</if>
+			<if test="m.menuno != null and m.menuno !=''">
+			and rp.menuno = #{m.menuno}
+			</if>
+		</if>	
+		<if test="orderby != null">
+		order by rp.${orderby}		
+			<if test="order !=null">
+			${order}
+			</if>
+		</if>
+	</select>
+	
+	<!-- 获取分页集合 -->
+	<select id="findListPage" parameterType="java.util.HashMap" resultType="com.psyssp.beans.SysRolesToPurview">
+	select * from roles_to_purview
+		<where>
+			<if test="filter != null and filter.m != null">
+				<if test="filter.m.roleno != null and filter.m.roleno !=''">
+				roleno like lower(concat('%',#{filter.m.roleno},'%'))
+				</if>
+				<if test="filter.m.menuno != null and filter.m.menuno !=''">
+				menuno like lower(concat('%',#{filter.m.menuno},'%'))
+				</if>
+				<if test="filter.m.funno != null and filter.m.funno != ''">
+				funno like lower(concat('%',#{filter.m.funno},'%'))
+				</if>
+			</if>
+		</where> 
+		<if test="filter.orderby != null">
+		order by ${filter.orderby}		
+			<if test="filter.order !=null">
+			${filter.order}
+			</if>
+		</if>		
+	</select>
+
+	<!-- 新增实体 -->
+	<insert id="save" parameterType="com.psyssp.beans.SysRolesToPurview">
+	insert into roles_to_purview (roleno,menuno,funno,createrno,createdate,modifierno,modifiedate)
+		values(#{roleno},#{menuno},#{funno},#{createrno},#{createdate},#{modifierno},#{modifiedate});
+	</insert>
+	
+	<select id="findLastSaved" resultType="com.psyssp.beans.SysRolesToPurview">
+	select * from roles_to_purview where id = last_insert_id()
+	</select>
+	
+	<!-- 修改实体 -->
+	<update id="update" parameterType="com.psyssp.beans.SysRolesToPurview">
+	update roles_to_purview
+		<set>
+			<if test="roleno != null">
+				roleno=#{roleno},
+			</if>
+			<if test="menuno != null">
+				menuno=#{menuno},
+			</if>
+			<if test="funno != null">
+				funno=#{funno},
+			</if>
+			<if test="createrno != null">
+				createrno=#{createrno},
+			</if>
+			<if test="createdate != null">
+				createdate=#{createdate},
+			</if>
+			<if test="modifierno != null">
+				modifierno=#{modifierno},
+			</if>
+			<if test="modifiedate != null">
+				modifiedate=#{modifiedate}
+			</if>
+		</set>
+		<where>
+			id=#{id}
+		</where>
+	</update>
+	
+	<!-- 删除实体  -->
+	<delete id="delete" parameterType="java.lang.Integer">
+	delete from roles_to_purview
+		<where>
+		id=#{id}
+		</where>
+	</delete>
+	
+</mapper>
+    

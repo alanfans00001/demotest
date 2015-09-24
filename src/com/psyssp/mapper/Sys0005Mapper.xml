@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ 	<!-- 数据字典 -->
+	<mapper namespace="com.psyssp.mapper.Sys0005Mapper">
+	    <!-- 根据Id查询 -->
+		<select id="find" parameterType="java.lang.Integer" resultType="com.psyssp.beans.SysWordbook">
+			select * from wordbook where id = #{id}
+		</select>
+		<!-- 查询最大Id -->
+		<select id="findLastSaved" resultType="com.psyssp.beans.SysWordbook">
+			select * from wordbook where id = last_insert_id()
+		</select> 
+		<!-- 详情查询 -->
+		<select id="findByWordbook" parameterType="com.psyssp.beans.SysWordbook" resultType="com.psyssp.beans.SysWordbook">
+			select u.* from wordbook u,roles r where u.wordbookno = #{wordbookno}
+		</select> 
+		
+		<!-- 唯一性验证 -->
+	   <select id="validateOnly" parameterType="com.psyssp.beans.SysWordbook" resultType="com.psyssp.beans.SysWordbook">
+     	select * from wordbook where 1=1
+			<if test="wordbookno != null and wordbookno !=''">
+			and wordbookno = #{wordbookno}
+			</if>
+	   </select>
+		
+		<!-- 查询列表 -->
+		<select id="findList" parameterType="java.util.HashMap" resultType="com.psyssp.beans.SysWordbook">
+		select * from wordbook where 1=1
+			<if test="m != null">
+				<if test="m != null">
+				  	<if test="m.wordbookno != null and m.wordbookno != ''">
+				 	and	 wordbookno like lower(concat('%',#{m.wordbookno},'%'))  
+					</if>
+					<if test="m.typeno != null and m.typeno != ''">
+			 		and	 typeno like lower(concat('%',#{m.typeno},'%'))
+					</if>
+					<if test="m.contents != null and m.contents !=''">
+				 	and	contents like lower(concat('%',#{m.contents},'%')) 
+					</if>
+					<if test="m.status != null and m.status !=''">
+					and status = #{m.status}
+					</if>
+				</if>
+			</if>
+			<if test="orderby != null">
+				order by ${orderby}
+				<if test="order !=null">${order}</if>
+			</if>
+		</select>
+
+		<select id="findObjectList" parameterType="com.psyssp.beans.SysWordbook" resultType="com.psyssp.beans.SysWordbook">
+		
+		</select>
+		
+		<!-- 分页查询 -->
+		<select id="findListPage" parameterType="java.util.HashMap" resultType="com.psyssp.beans.SysWordbook">
+		select * from wordbook where 1=1
+			<if test="filter != null and filter.m != null">
+			  	<if test="filter.m.wordbookno != null and filter.m.wordbookno != ''">
+			 	and	 wordbookno like lower(concat('%',#{filter.m.wordbookno},'%'))  
+				</if>
+				<if test="filter.m.langno != null and filter.m.langno != ''">
+			 	and langno like lower(concat('%',#{filter.m.langno},'%')) 
+				</if>
+				<if test="filter.m.typeno != null and filter.m.typeno != ''">
+		 		and	 typeno like lower(concat('%',#{filter.m.typeno},'%'))
+				</if>
+				<if test="filter.m.contents != null and filter.m.contents !=''">
+			 	and	contents like lower(concat('%',#{filter.m.contents},'%')) 
+				</if>
+				<if test="filter.m.status != null and filter.m.status !=''">
+				and status = #{filter.m.status}
+				</if>
+			</if>
+			<if test="filter.orderby != null">
+			order by ${filter.orderby}		
+				<if test="filter.order !=null">
+			 	${filter.order}
+				</if>
+			</if>		
+		</select>
+
+		<select id="findObjectListPage" parameterType="com.psyssp.beans.SysWordbook" 	resultType="com.psyssp.beans.SysWordbook">
+		</select>
+		<!-- 保存方法 -->
+		<insert id="save" parameterType="com.psyssp.beans.SysWordbook">
+		insert into wordbook
+		(wordbookno,langno,typeno,contents,status,createrno,createdate,modifierno,modifiedate)
+		values(#{wordbookno},#{langno},#{typeno},#{contents},#{status},#{createrno},#{createdate},#{modifierno},#{modifiedate});
+		</insert>
+		<!-- 修改方法 -->
+		<update id="update" parameterType="com.psyssp.beans.SysWordbook">
+		update wordbook
+			<set> 
+				<if test="wordbookno != null">wordbookno=#{wordbookno},</if> 
+				<if test="langno != null">langno=#{langno},</if> 
+				<if test="typeno != null">typeno=#{typeno},</if> 
+				<if test="contents != null">contents=#{contents},</if> 
+				<if test="status != null">status=#{status},</if> 
+				<if test="modifierno != null">modifierno=#{modifierno},</if>
+				<if test="modifiedate != null">modifiedate=#{modifiedate}</if>
+			</set>
+			<where>id=#{id}</where>
+		</update>
+		<!-- 删除方法 -->
+		<delete id="delete" parameterType="java.lang.Integer">
+		delete from wordbook
+			<where>id=#{id}</where>
+		</delete>
+	</mapper> 

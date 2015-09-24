@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- SysFun 系统按钮  -->
+<mapper namespace="com.psyssp.mapper.Sys0006Mapper">
+
+	<!-- 根据ID获取实体 -->
+	<select id="find" parameterType="java.lang.Integer" resultType="com.psyssp.beans.SysFun">
+	select * from fun where id = #{id}
+	</select>
+	
+	<!-- 获取最后一次保存的实体 -->
+	<select id="findLastSaved" resultType="com.psyssp.beans.SysFun">
+	select * from fun where id = last_insert_id()
+	</select>
+	
+	<!-- 表单唯一验证 -->
+	<select id="validateOnly" parameterType="com.psyssp.beans.SysFun" resultType="com.psyssp.beans.SysFun">
+	select * from fun
+		<where>
+			<if test="funno != null and funno !=''">
+			funno = #{funno}
+			</if>
+			<if test="funvalue != null and funvalue !=''">
+			funvalue = #{funvalue}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 获取集合 -->
+	<select id="findList" parameterType="java.util.HashMap" resultType="com.psyssp.beans.SysFun">
+	select * from fun
+		<where>
+			<if test="m != null">
+				<if test="m.funvalue != null and m.funvalue != ''">
+				funvalue like lower(concat('%',#{m.funvalue},'%'))
+				</if>
+				<if test="m.funno != null and m.funno != ''">
+				funno = #{m.funno}
+				</if>
+				<if test="m.status != null and m.status != ''">
+				status = #{m.status}
+				</if>
+			</if>
+		</where> 
+		<if test="orderby != null and orderby != ''">
+		order by ${orderby}		
+			<if test="order !=null and order != ''">
+			${order}
+			</if>
+		</if>
+	</select>
+
+	<!-- 获取分页集合 -->
+	<select id="findListPage" parameterType="java.util.HashMap" resultType="com.psyssp.beans.SysFun">
+	select * from fun
+		<where>
+			<if test="filter != null and filter.m != null">
+				<if test="filter.m.funno != null and filter.m.funno != ''">
+				funno like lower(concat('%',#{filter.m.funno},'%'))
+				</if>
+				<if test="filter.m.funvalue != null and filter.m.funvalue != ''">
+				and funvalue like lower(concat('%',#{filter.m.funvalue},'%'))
+				</if>
+				<if test="filter.m.status != null and filter.m.status != ''">
+				and status = #{filter.m.status}
+				</if>
+			</if>
+		</where> 
+		<if test="filter.orderby != null">
+		order by ${filter.orderby}		
+			<if test="filter.order !=null">
+			${filter.order}
+			</if>
+		</if>		
+	</select>
+
+	<!-- 新增实体 -->
+	<insert id="save" parameterType="com.psyssp.beans.SysFun">
+	insert into fun (funno,funvalue,funmethod,funid,funname,status,createrno,createdate,modifierno,modifiedate)
+		values(#{funno},#{funvalue},#{funmethod},#{funid},#{funname},#{status},#{createrno},#{createdate},#{modifierno},#{modifiedate});
+	</insert>
+	
+	<!-- 修改实体 -->
+	<update id="update" parameterType="com.psyssp.beans.SysFun">
+	update fun
+		<set>
+			<if test="funno != null">
+				funno=#{funno},
+			</if>
+			<if test="funvalue != null">
+				funvalue=#{funvalue},
+			</if>
+			<if test="funmethod != null">
+				funmethod=#{funmethod},
+			</if>
+			<if test="funid != null">
+				funid=#{funid},
+			</if>
+			<if test="funname != null">
+				funname=#{funname},
+			</if>
+			<if test="status != null">
+				status=#{status},
+			</if>
+			<if test="modifierno != null">
+				modifierno=#{modifierno},
+			</if>
+			<if test="modifiedate != null">
+				modifiedate=#{modifiedate}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<!-- 删除实体  -->
+	<delete id="delete" parameterType="java.lang.Integer">
+	delete from fun where id=#{id}
+	</delete>
+</mapper>
+    

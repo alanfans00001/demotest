@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.psyssp.mapper.Sys0001Mapper">
+	<!-- 根据主键查找系统用户 -->
+	<select id="find" parameterType="java.lang.Integer" resultType="com.psyssp.beans.SysUser">
+	select * from users where id = #{id}
+	</select>
+	
+	<!-- 查找上一个新增的用户 -->
+	<select id="findLastSaved" resultType="com.psyssp.beans.SysUser">
+	select * from users where id = last_insert_id()
+	</select>
+
+	<!-- 用户登录验证 -->
+	<select id="findByUser" parameterType="com.psyssp.beans.SysUser" resultType="com.psyssp.beans.SysUser">
+	select u.* from users u,roles r where u.roleno=r.roleno and u.userno = #{userno} and u.password=#{password}
+	</select>
+
+	<!-- 用户唯一性验证 -->
+	<select id="validateOnly" parameterType="com.psyssp.beans.SysUser" resultType="com.psyssp.beans.SysUser">
+	select * from users where 1=1 
+		<if test="userno != null and userno !=''">
+		and userno = #{userno}
+		</if>
+		<if test="username != null and username !=''">
+		and username = #{username}
+		</if>
+	</select>
+
+	<!-- 单表查询用户集合 -->
+	<select id="findList" parameterType="java.util.HashMap" resultType="com.psyssp.beans.SysUser">
+	select * from users where 1=1
+		<if test="m != null">
+			<if test="m.userno != null and m.userno != ''">
+			and userno like lower(concat('%',#{m.userno},'%'))
+			</if>
+			<if test="m.username != null and m.username != ''">
+			and username like lower(concat('%',#{m.username},'%'))
+			</if>
+			<if test="m.email != null and m.email != ''">
+			and email like lower(concat('%',#{m.email},'%'))
+			</if>
+			<if test="m.roleno != null and m.roleno != ''">
+			and role = #{m.roleno}
+			</if>
+			<if test="m.status != null and m.status != ''">
+			and status = #{m.status}
+			</if>
+		</if>
+		<if test="orderby != null and orderby != ''">
+		order by ${orderby}		
+			<if test="order !=null and order != ''">
+			${order}
+			</if>
+		</if>
+	</select>
+
+	<!-- 多表查询用户集合 -->
+	<select id="findObjectList" parameterType="com.psyssp.beans.SysUser" resultType="com.psyssp.beans.SysUser">
+	</select>
+
+	<!-- 分页单表查询用户集合 -->
+	<select id="findListPage" parameterType="java.util.HashMap" resultType="com.psyssp.beans.SysUser">
+	select * from users where 1=1
+		<if test="filter != null and filter.m != null">
+			<if test="filter.m.userno != null and filter.m.userno != ''">
+			and userno like lower(concat('%',#{filter.m.userno},'%'))
+			</if>
+			<if test="filter.m.username != null and filter.m.username != ''">
+			and username like lower(concat('%',#{filter.m.username},'%'))
+			</if>
+			<if test="filter.m.email != null and filter.m.email != ''">
+			and email like lower(concat('%',#{filter.m.email},'%'))
+			</if>
+			<if test="filter.m.roleno != null and filter.m.roleno != ''">
+			and roleno = #{filter.m.roleno}
+			</if>
+			<if test="filter.m.status != null and filter.m.status != ''">
+			and status = #{filter.m.status}
+			</if>
+		</if>
+		<if test="filter.orderby != null">
+		order by ${filter.orderby}		
+			<if test="filter.order !=null">
+			${filter.order}
+			</if>
+		</if>		
+	</select>
+
+	<!-- 分页多表查询用户集合 -->
+	<select id="findObjectListPage" parameterType="com.psyssp.beans.SysUser" resultType="com.psyssp.beans.SysUser">
+	</select>
+
+	<!-- 新增用户 -->
+	<insert id="save" parameterType="com.psyssp.beans.SysUser">
+	insert into users (userno,username,password,email,roleno,status,createrno,createdate,modifierno,modifiedate)
+		values(#{userno},#{username},#{password},#{email},#{roleno},#{status},#{createrno},#{createdate},#{modifierno},#{modifiedate});
+	</insert>
+	
+	<!-- 修改用户 -->
+	<update id="update" parameterType="com.psyssp.beans.SysUser">
+	update users
+		<set>
+			<if test="userno != null">
+				userno=#{userno},
+			</if>
+			<if test="username != null">
+				username=#{username},
+			</if>
+			<if test="password != null">
+				password=#{password},
+			</if>
+			<if test="email != null">
+				email=#{email},
+			</if>
+			<if test="roleno != null">
+				roleno=#{roleno},
+			</if>
+			<if test="status != null">
+				status=#{status},
+			</if>
+			<if test="modifierno != null">
+				modifierno=#{modifierno},
+			</if>
+			<if test="modifiedate != null">
+				modifiedate=#{modifiedate}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<!-- 删除用户 -->
+	<delete id="delete" parameterType="java.lang.Integer">
+	delete from users where id=#{id}
+	</delete>
+</mapper>
+    

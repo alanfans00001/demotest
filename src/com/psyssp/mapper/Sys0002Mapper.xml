@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.psyssp.mapper.Sys0002Mapper">
+	<!-- 根据主键查找系统菜单 -->
+	<select id="find" parameterType="java.lang.Integer" resultType="com.psyssp.beans.SysMenu">
+	select * from menu where id = #{id}
+	</select>
+	
+	<!--查找上一个新增菜单 -->
+	<select id="findLastSaved" resultType="com.psyssp.beans.SysMenu">
+	select * from menu where id = last_insert_id()
+	</select>
+	
+	<!-- 菜单唯一性验证 -->
+	<select id="validateOnly" parameterType="com.psyssp.beans.SysMenu" resultType="com.psyssp.beans.SysMenu">
+	select * from  menu where 1=1
+		<if test=" menuno!= null and  menuno!=''">
+		and menuno = #{menuno}
+		</if>
+	</select>
+
+	<!-- 单表查询菜单集合 -->
+	<select id="findList" parameterType="java.util.HashMap" resultType="com.psyssp.beans.SysMenu">
+	select * from menu where 1=1
+		<if test="m != null">			
+			<if test="m.menuno!=null and m.menuno != ''">
+			and menuno like lower(concat('%',#{m.menuno},'%'))
+			</if>
+			<if test="m.menuname!=null and m.menuname != ''">
+			and menuname like lower(concat('%',#{m.menuname},'%'))			
+			</if>
+			<if test="m.fathermenuno!=null and m.fathermenuno != ''">
+			and fathermenuno like lower(concat('%',#{m.fathermenuno},'%'))			
+			</if>
+			<if test="m.menutype!=null and m.menutype != ''">
+			and menutype=#{m.menutype}			
+			</if>
+			<if test="m.menuurl!=null and m.menuurl != ''">
+			and menuurl like lower(concat('%',#{m.menuurl},'%'))				
+			</if>				
+		</if>
+		<if test="orderby != null">
+		order by ${orderby}		
+			<if test="order !=null">
+			${order}
+			</if>
+		</if>
+	</select>
+
+	<!-- 多表查询菜单集合 -->
+	<select id="findObjectList" parameterType="com.psyssp.beans.SysMenu" resultType="com.psyssp.beans.SysMenu">
+	</select>
+
+	<!-- 分页单表查询菜单集合 -->
+	<select id="findListPage" parameterType="com.psyssp.beans.SysMenu" resultType="com.psyssp.beans.SysMenu">
+	select * from menu where 1=1
+		<if test="filter != null and filter.m != null">			
+			<if test="filter.m.menuno!=null and filter.m.menuno != ''">
+			and menuno like lower(concat('%',#{filter.m.menuno},'%'))
+			</if>
+			<if test="filter.m.menuname!=null and filter.m.menuname != ''">
+			and menuname like lower(concat('%',#{filter.m.menuname},'%'))			
+			</if>
+			<if test="filter.m.menutype!=null and filter.m.menutype != ''">
+			and menutype=#{filter.m.menutype}			
+			</if>
+			<if test="filter.m.menuurl!=null and filter.m.menuurl != ''">
+			and menuurl like lower(concat('%',#{filter.m.menuurl},'%'))				
+			</if>				
+		</if>
+		<if test="filter.orderby != null">
+		order by ${filter.orderby}		
+			<if test="filter.order !=null">
+			${filter.order}
+			</if>
+		</if>
+	</select>
+
+	<!-- 分页多表查询菜单集合 -->
+	<select id="findObjectListPage" parameterType="com.psyssp.beans.SysMenu" resultType="com.psyssp.beans.SysMenu">
+	</select>
+
+	<!-- 新增菜单 -->
+	<insert id="save" parameterType="com.psyssp.beans.SysMenu">
+	insert into menu(menuno,menuname,fathermenuno,menutype,menuurl,allfunno,createrno,createdate,modifierno,modifiedate) 
+	values(#{menuno},#{menuname},#{fathermenuno},#{menutype},#{menuurl},#{allfunno},#{createrno},#{createdate},#{modifierno},#{modifiedate})
+	</insert>
+	
+	<!-- 修改菜单 -->
+	<update id="update" parameterType="com.psyssp.beans.SysUser">
+	update menu
+		<set>
+			<if test="menuno!=null">menuno=#{menuno},</if>			
+			<if test="menuname!=null">menuname=#{menuname},</if>			
+			<if test="fathermenuno!=null">fathermenuno=#{fathermenuno},</if>			
+			<if test="menutype!=null">menutype=#{menutype},</if>			
+			<if test="menuurl!=null">menuurl=#{menuurl},</if>			
+			<if test="allfunno!=null">allfunno=#{allfunno},</if>			
+			<if test="modifierno!=null">modifierno=#{modifierno},</if>			
+			<if test="modifiedate!=null">modifiedate=#{modifiedate}</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<!-- 根据id删除菜单 -->
+	<delete id="delete" parameterType="java.lang.Integer">
+	delete from menu where id=#{id}
+	</delete>
+	
+</mapper>
+    

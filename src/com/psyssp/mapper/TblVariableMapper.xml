@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.psyssp.mapper.TblVariableMapper">
+	<!-- 根据主键查找系统菜单 -->
+	<select id="find" parameterType="java.lang.Integer" resultType="com.psyssp.beans.TblVariable">
+	select * from tbl_variable where record_status = 0 and variable_id = #{id}
+	</select>
+	
+	<!--查找上一个新增菜单 -->
+	<select id="findLastSaved" resultType="com.psyssp.beans.TblVariable">
+	select * from tbl_variable where  variable_id = last_insert_id()
+	</select>
+	
+	<!-- 菜单唯一性验证 -->
+	<select id="validateOnly" parameterType="com.psyssp.beans.TblVariable" resultType="com.psyssp.beans.TblVariable">
+	select * from  menu where 1=1
+		<if test=" menuno!= null and  menuno!=''">
+		and menuno = #{menuno}
+		</if>
+	</select>
+
+	<!-- 单表查询菜单集合 -->
+	<select id="findList" parameterType="java.util.HashMap" resultType="com.psyssp.beans.TblVariable">
+	select * from tbl_variable where record_status = 0
+		<if test="m != null">			
+			<!-- <if test="m.menuno!=null and m.menuno != ''">
+			and menuno like lower(concat('%',#{m.menuno},'%'))
+			</if>
+			<if test="m.menuname!=null and m.menuname != ''">
+			and menuname like lower(concat('%',#{m.menuname},'%'))			
+			</if>
+			<if test="m.fathermenuno!=null and m.fathermenuno != ''">
+			and fathermenuno like lower(concat('%',#{m.fathermenuno},'%'))			
+			</if>
+			<if test="m.menutype!=null and m.menutype != ''">
+			and menutype=#{m.menutype}			
+			</if>
+			<if test="m.menuurl!=null and m.menuurl != ''">
+			and menuurl like lower(concat('%',#{m.menuurl},'%'))				
+			</if>				 -->
+		</if>
+		<if test="orderby != null">
+		order by ${orderby}		
+			<if test="order !=null">
+			${order}
+			</if>
+		</if>
+	</select>
+
+	<!-- 多表查询菜单集合 -->
+	<select id="findObjectList" parameterType="com.psyssp.beans.TblVariable" resultType="com.psyssp.beans.TblVariable">
+	</select>
+
+	<!-- 分页单表查询菜单集合 -->
+	<select id="findListPage" parameterType="com.psyssp.beans.TblVariable" resultType="com.psyssp.beans.TblVariable">
+	select * from tbl_variable where record_status = 0
+		<if test="filter != null and filter.m != null">			
+			 <if test="filter.m.variable_name!=null and filter.m.variable_name != ''">
+			and variable_name like lower(concat('%',#{filter.m.variable_name},'%'))
+			</if>
+			<!--<if test="filter.m.menuname!=null and filter.m.menuname != ''">
+			and menuname like lower(concat('%',#{filter.m.menuname},'%'))			
+			</if>
+			<if test="filter.m.menutype!=null and filter.m.menutype != ''">
+			and menutype=#{filter.m.menutype}			
+			</if>
+			<if test="filter.m.menuurl!=null and filter.m.menuurl != ''">
+			and menuurl like lower(concat('%',#{filter.m.menuurl},'%'))				
+			</if>				 -->
+		</if>
+		<if test="filter.orderby != null">
+		order by ${filter.orderby}		
+			<if test="filter.order !=null">
+			${filter.order}
+			</if>
+		</if>
+	</select>
+
+	<!-- 分页多表查询菜单集合 -->
+	<select id="findObjectListPage" parameterType="com.psyssp.beans.TblVariable" resultType="com.psyssp.beans.TblVariable">
+	</select>
+
+	<!-- 新增菜单 -->
+	<insert id="save" parameterType="com.psyssp.beans.TblVariable">
+	insert into tbl_variable(
+	                variable_name,
+	                variable_type,
+	                variable_desc,
+	                variable_style,
+	               <if test="variable_index !=null">variable_index,</if>
+	               <if test="variable_txtwatermark !=null"> variable_txtwatermark,</if>
+	               <if test="variable_linkage !=null"> variable_linkage,</if>
+	               <if test="variable_linkage_variable_name !=null">variable_linkage_variable_name,</if>
+	                variable_required,
+	               <if test="variable_requiredmsg !=null"> variable_requiredmsg,</if>
+	                variable_vaild,
+	               <if test="variable_vaildstr !=null"> variable_vaildstr,</if>
+	               <if test="variable_vaildmsg !=null"> variable_vaildmsg,</if>
+	                create_date,
+	                creater_userid,
+	                modifie_date,
+	                modifier_userid,
+	                record_status
+	   )values(
+	                #{variable_name},
+	                #{variable_type},
+	                #{variable_desc},
+	                #{variable_style},
+	                <if test="variable_index!=null">#{variable_index},</if>
+	                <if test="variable_txtwatermark !=null">#{variable_txtwatermark},</if>
+	                <if test="variable_linkage !=null">#{variable_linkage},</if>
+	                <if test="variable_linkage_variable_name !=null">#{variable_linkage_variable_name},</if>
+	                #{variable_required},
+	                <if test="variable_requiredmsg !=null">#{variable_requiredmsg},</if>
+	                #{variable_vaild},
+	                <if test="variable_vaildstr !=null">#{variable_vaildstr},</if>
+	                <if test="variable_vaildmsg !=null">#{variable_vaildmsg},</if>
+	                #{create_date},
+	                #{creater_userid},
+	                #{modifie_date},
+	                #{modifier_userid},
+	                '0'
+	 )
+	</insert>
+	
+	<!-- 修改菜单 -->
+	<update id="update" parameterType="com.psyssp.beans.TblVariable">
+	update tbl_variable
+		<set>
+			<if test="variable_name !=null">variable_name=#{variable_name},</if>			
+			<if test="variable_type !=null">variable_type=#{variable_type},</if>			
+			<if test="variable_desc !=null">variable_desc=#{variable_desc},</if>			
+			<if test="variable_index !=null">variable_index=#{variable_index},</if>	
+			<if test="variable_style !=null">variable_style=#{variable_style},</if>			
+			<if test="variable_txtwatermark !=null">variable_txtwatermark=#{variable_txtwatermark},</if>			
+			<if test="variable_linkage !=null">variable_linkage=#{variable_linkage},</if>			
+			<if test="variable_linkage_variable_name !=null">variable_linkage_variable_name=#{variable_linkage_variable_name},</if>			
+			<if test="variable_required !=null">variable_required=#{variable_required},</if>
+            <if test="variable_requiredmsg !=null">variable_requiredmsg=#{variable_requiredmsg},</if>
+            <if test="variable_vaild !=null">variable_vaild=#{variable_vaild},</if>
+            <if test="variable_vaildstr !=null">variable_vaildstr=#{variable_vaildstr},</if>
+            <if test="variable_vaildmsg !=null">variable_vaildmsg=#{variable_vaildmsg},</if>
+            <if test="modifie_date !=null">modifie_date=#{modifie_date},</if>
+            <if test="modifier_userid !=null">modifier_userid=#{modifier_userid},</if>
+            <if test="record_status !=null">record_status=#{record_status},</if>
+		</set>
+		where variable_id=#{variable_id}
+	</update>
+	
+	<!-- 根据id删除菜单 -->
+	<delete id="delete" parameterType="java.lang.Integer">
+	update tbl_variable set record_status = 1 where variable_id=#{id}
+	</delete>
+	
+</mapper>
+    

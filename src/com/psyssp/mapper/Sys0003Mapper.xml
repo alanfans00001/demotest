@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- SysRole 系统角色  -->
+<mapper namespace="com.psyssp.mapper.Sys0003Mapper">
+
+	<!-- 根据ID获取实体 -->
+	<select id="find" parameterType="java.lang.Integer" resultType="com.psyssp.beans.SysRole">
+	select * from roles where id = #{id}
+	</select>
+	
+	<!-- 获取最后一次保存的实体 -->
+	<select id="findLastSaved" resultType="com.psyssp.beans.SysRole">
+	select * from roles where id = last_insert_id()
+	</select>
+
+	<!-- 表单唯一验证 -->
+	<select id="validateOnly" parameterType="com.psyssp.beans.SysRole" resultType="com.psyssp.beans.SysRole">
+	select * from roles
+		<where>
+			<if test="roleno != null and roleno !=''">
+			roleno = #{roleno}
+			</if>
+			<if test="rolename != null and rolename !=''">
+			rolename = #{rolename}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 获取集合 -->
+	<select id="findList" parameterType="java.util.HashMap" resultType="com.psyssp.beans.SysRole">
+	select * from roles
+		<where>
+			<if test="m != null">
+				<if test="m.roleno != null">
+					roleno = #{m.roleno}
+				</if>
+				<if test="m.rolename != null">
+					rolename like lower(concat('%',#{m.rolename},'%'))
+				</if>
+			</if>
+		</where> 
+		<if test="orderby != null">
+		order by ${orderby}		
+			<if test="order !=null">
+			${order}
+			</if>
+		</if>
+	</select>
+	
+	<!-- 获取分页集合 -->
+	<select id="findListPage" parameterType="java.util.HashMap" resultType="com.psyssp.beans.SysRole">
+		select * from roles
+		<where>
+			<if test="filter != null and filter.m != null">
+				<if test="filter.m.roleno != null and filter.m.roleno != ''">
+				roleno like lower(concat('%',#{filter.m.roleno},'%')) 
+				</if>
+				<if test="filter.m.rolename != null and filter.m.rolename != ''">
+				 and rolename like lower(concat('%',#{filter.m.rolename},'%'))
+				</if>
+			</if>
+		</where> 
+		<if test="filter.orderby != null">
+			order by ${filter.orderby}		
+			<if test="filter.order !=null">
+			${filter.order}	
+			</if>
+		</if>
+	</select>
+	
+	<!-- 新增实体 -->
+	<insert id="save" parameterType="com.psyssp.beans.SysRole">
+	insert into roles (roleno,rolename,createrno,createdate,modifierno,modifiedate)
+		values(#{roleno},#{rolename},#{createrno},#{createdate},#{modifierno},#{modifiedate});
+	</insert>
+	
+	<!-- 修改实体 -->
+	<update id="update" parameterType="com.psyssp.beans.SysRole">
+	update roles
+		<set>
+				<if test="roleno != null">
+					roleno=#{roleno},
+				</if>
+				<if test="rolename != null">
+					rolename=#{rolename},
+				</if>
+				<if test="createrno != null">
+					createrno=#{createrno},
+				</if>
+				<if test="createdate != null">
+					createdate=#{createdate},
+				</if>
+				<if test="modifierno != null">
+					modifierno=#{modifierno},
+				</if>
+				<if test="modifiedate != null">
+					modifiedate=#{modifiedate}
+				</if>
+		</set>
+		<where>
+			id=#{id}
+		</where>
+	</update>
+	
+	<!-- 删除实体  -->
+	<delete id="delete" parameterType="java.lang.Integer">
+	delete from roles
+		<where>
+		id=#{id}
+		</where>
+	</delete>
+</mapper>
+    

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.psyssp.mapper.TblUserInfoMapper">
+	<!-- 根据主键查找系统菜单 -->
+	<select id="find" parameterType="java.lang.Integer" resultType="com.psyssp.beans.TblUserInfo">
+	select * from tbl_user_info where record_status = 0 and user_card = #{id}
+	</select>
+	
+	<select id="find_byCard" parameterType="java.lang.String" resultType="java.util.Map">
+	select * from tbl_user_info where record_status = 0 and user_card = #{id}
+	</select>
+	
+	<!--查找上一个新增菜单 -->
+	<select id="findLastSaved" resultType="com.psyssp.beans.TblVariable">
+	select * from tbl_variable where  variable_id = last_insert_id()
+	</select>
+	
+	<!-- 菜单唯一性验证 -->
+	<select id="validateOnly" parameterType="com.psyssp.beans.TblVariable" resultType="com.psyssp.beans.TblVariable">
+	select * from  menu where 1=1
+		<if test=" menuno!= null and  menuno!=''">
+		and menuno = #{menuno}
+		</if>
+	</select>
+
+	<!-- 单表查询菜单集合 -->
+	<select id="findList" parameterType="java.util.HashMap" resultType="com.psyssp.beans.TblVariable">
+	select * from tbl_variable where record_status = 0
+		<if test="m != null">			
+			<!-- <if test="m.menuno!=null and m.menuno != ''">
+			and menuno like lower(concat('%',#{m.menuno},'%'))
+			</if>
+			<if test="m.menuname!=null and m.menuname != ''">
+			and menuname like lower(concat('%',#{m.menuname},'%'))			
+			</if>
+			<if test="m.fathermenuno!=null and m.fathermenuno != ''">
+			and fathermenuno like lower(concat('%',#{m.fathermenuno},'%'))			
+			</if>
+			<if test="m.menutype!=null and m.menutype != ''">
+			and menutype=#{m.menutype}			
+			</if>
+			<if test="m.menuurl!=null and m.menuurl != ''">
+			and menuurl like lower(concat('%',#{m.menuurl},'%'))				
+			</if>				 -->
+		</if>
+		<if test="orderby != null">
+		order by ${orderby}		
+			<if test="order !=null">
+			${order}
+			</if>
+		</if>
+	</select>
+
+	<!-- 多表查询菜单集合 -->
+	<select id="findObjectList" parameterType="com.psyssp.beans.TblVariable" resultType="com.psyssp.beans.TblVariable">
+	</select>
+
+	<!-- 分页单表查询菜单集合 -->
+	<select id="findListPage" parameterType="com.psyssp.beans.TblVariable" resultType="com.psyssp.beans.TblVariable">
+	select * from tbl_variable where record_status = 0
+		<if test="filter != null and filter.m != null">			
+			 <if test="filter.m.variable_name!=null and filter.m.variable_name != ''">
+			and variable_name like lower(concat('%',#{filter.m.variable_name},'%'))
+			</if>
+			<!--<if test="filter.m.menuname!=null and filter.m.menuname != ''">
+			and menuname like lower(concat('%',#{filter.m.menuname},'%'))			
+			</if>
+			<if test="filter.m.menutype!=null and filter.m.menutype != ''">
+			and menutype=#{filter.m.menutype}			
+			</if>
+			<if test="filter.m.menuurl!=null and filter.m.menuurl != ''">
+			and menuurl like lower(concat('%',#{filter.m.menuurl},'%'))				
+			</if>				 -->
+		</if>
+		<if test="filter.orderby != null">
+		order by ${filter.orderby}		
+			<if test="filter.order !=null">
+			${filter.order}
+			</if>
+		</if>
+	</select>
+
+
+
+	<!-- 新增菜单 -->
+	<insert id="save" parameterType="com.psyssp.beans.TblUserInfo">
+	insert into tbl_user_info(
+	                user_card,
+	                variable_id,
+	                variable_value,
+	                create_date,
+	                creater_userid,
+	                modifie_date,
+	                modifier_userid,
+	                record_status
+	   )values(
+	                #{user_card},
+	                #{variable_id},
+	                #{variable_value},
+	                #{create_date},
+	                #{creater_userid},
+	                #{modifie_date},
+	                #{modifier_userid},
+	                '0'
+	 )
+	</insert>
+	
+	<!-- 修改菜单 -->
+	<update id="update" parameterType="com.psyssp.beans.TblVariable">
+	update tbl_user_info
+		<set>
+			<!-- <if test="user_card !=null">user_card=#{user_card},</if>			
+			<if test="variable_id !=null">variable_id=#{variable_id},</if>	 -->		
+			<if test="variable_value !=null">variable_value=#{variable_value},</if>			
+			<if test="modifie_date !=null">modifie_date=#{modifie_date},</if>
+            <if test="modifier_userid !=null">modifier_userid=#{modifier_userid},</if>
+            <if test="record_status !=null">record_status=#{record_status},</if>
+		</set>
+		where variable_id=#{variable_id} and user_card = #{user_card}
+	</update>
+	
+	<!-- 根据id删除菜单 -->
+	<delete id="delete" parameterType="java.lang.Integer">
+	update tbl_user_info set record_status = 1 where user_card=#{id}
+	</delete>
+	
+	<select id="ObjecetList" parameterType="java.util.HashMap" resultType="com.psyssp.beans.TblUserInfo">
+		 SELECT
+				usr.user_card,
+				GROUP_CONCAT(
+					DISTINCT var.variable_id,
+					":",
+					usr.variable_value
+				) as _Object
+			FROM
+				tbl_user_info usr
+			INNER JOIN tbl_variable var ON usr.variable_id = var.variable_id and usr.record_status = 0
+			GROUP BY
+				usr.user_card
+	</select>
+	
+</mapper>
+    

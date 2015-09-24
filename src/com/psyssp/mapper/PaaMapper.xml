@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.psyssp.mapper.PaaMapper">
+
+	<!-- 分页单表查询菜单集合 -->
+	<select id="selectaa" statementType="CALLABLE" resultType="java.util.Map">
+	<![CDATA[ 
+	    {call aa()}
+	   ]]>
+	</select>
+
+	
+</mapper>
+    
